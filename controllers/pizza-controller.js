@@ -5,6 +5,15 @@ const pizzaController = {
   // get all pizzas
   getAllPizza(req, res) {
     Pizza.find({})
+      .populate({
+        path: 'comments',
+        // - means that we don't want the __v field returned during the populate method
+        select: '-__v',
+      })
+      // the query will also not include the __v field.
+      .select('-__v')
+      // will sort in DESC order by the _id value
+      .sort({ _id: -1 })
       .then((dbPizzaData) => res.json(dbPizzaData))
       .catch((err) => {
         console.log(err);
@@ -14,6 +23,11 @@ const pizzaController = {
   // get one pizza by id
   getPizzaById({ params }, res) {
     Pizza.findOne({ _id: params.id })
+      .populate({
+        path: 'comments',
+        select: '-__v',
+      })
+      .select('-__v')
       .then((dbPizzaData) => {
         // if no pizza found, send 404
         if (!dbPizzaData) {
